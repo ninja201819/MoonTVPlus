@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getAuthInfoFromCookie } from '@/lib/auth';
+import { isTVModeEnabled } from '@/lib/tv-mode';
 import type { TVRemoteKeyCommand } from '@/lib/tv-remote-types';
 
 const { sendTVRemoteCommand } = require('@/lib/tv-remote-hub');
@@ -8,6 +9,10 @@ const { sendTVRemoteCommand } = require('@/lib/tv-remote-hub');
 export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
+  if (!isTVModeEnabled()) {
+    return NextResponse.json({ error: 'TV 模式未启用' }, { status: 404 });
+  }
+
   const authInfo = getAuthInfoFromCookie(request);
   if (!authInfo?.username) {
     return NextResponse.json({ error: '未登录' }, { status: 401 });

@@ -17,6 +17,10 @@ function shouldInitSQLite() {
   return process.env.NEXT_PUBLIC_STORAGE_TYPE === 'd1' && !isCloudflare && process.env.MOONTV_LITE !== 'true';
 }
 
+function isTVModeEnabled() {
+  return process.env.ENABLE_TV_MODE !== 'false';
+}
+
 function ensureSQLiteReady() {
   if (!shouldInitSQLite()) {
     return;
@@ -820,19 +824,30 @@ app.prepare().then(async () => {
 
   let watchRoomServer = null;
   let tvRemoteServer = null;
+  let io = null;
 
-  const io = new Server(httpServer, {
-    path: '/socket.io',
-    cors: {
-      origin: '*',
-      methods: ['GET', 'POST'],
-    },
-  });
+  const tvModeEnabled = isTVModeEnabled();
+  const shouldStartInternalWatchRoom =
+    watchRoomConfig.enabled && watchRoomConfig.serverType === 'internal';
 
-  tvRemoteServer = new TVRemoteServer(io);
-  console.log('[TVRemote] Socket.IO remote server initialized');
+  if (tvModeEnabled || shouldStartInternalWatchRoom) {
+    io = new Server(httpServer, {
+      path: '/socket.io',
+      cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+      },
+    });
+  }
 
-  if (watchRoomConfig.enabled && watchRoomConfig.serverType === 'internal') {
+  if (tvModeEnabled && io) {
+    tvRemoteServer = new TVRemoteServer(io);
+    console.log('[TVRemote] Socket.IO remote server initialized');
+  } else {
+    console.log('[TVRemote] TV mode disabled, remote server not initialized');
+  }
+
+  if (shouldStartInternalWatchRoom && io) {
     // 初始化观影室服务器
     watchRoomServer = new WatchRoomServer(io);
     console.log('[WatchRoom] Socket.IO server initialized');
@@ -851,7 +866,11 @@ app.prepare().then(async () => {
     })
     .listen(port, () => {
       console.log(`> Ready on http://${hostname}:${port}`);
-      console.log(`> Socket.IO ready on ws://${hostname}:${port}`);
+      if (io) {
+        console.log(`> Socket.IO ready on ws://${hostname}:${port}`);
+      } else {
+        console.log('> Socket.IO disabled');
+      }
     });
 
   const forceExit = (signal) => {

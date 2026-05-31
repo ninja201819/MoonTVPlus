@@ -255,6 +255,7 @@ export default async function RootLayout({
     BANGUMI_DATA_SOURCE: bangumiDataSource,
     BANGUMI_API_BASE_URL: bangumiApiBaseUrl,
     BANGUMI_IMAGE_BASE_URL: bangumiImageBaseUrl,
+    ENABLE_TV_MODE: process.env.ENABLE_TV_MODE !== 'false',
     ENABLE_TVBOX_SUBSCRIBE: process.env.ENABLE_TVBOX_SUBSCRIBE === 'true',
     ENABLE_OFFLINE_DOWNLOAD:
       process.env.NEXT_PUBLIC_ENABLE_OFFLINE_DOWNLOAD === 'true',

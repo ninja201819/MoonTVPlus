@@ -87,6 +87,7 @@ export const UserMenu: React.FC = () => {
 
   // 订阅相关状态
   const [subscribeEnabled, setSubscribeEnabled] = useState(false);
+  const [tvModeEnabled, setTvModeEnabled] = useState(true);
   const [subscribeUrl, setSubscribeUrl] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
   const [orionBaseUrlCopySuccess, setOrionBaseUrlCopySuccess] = useState(false);
@@ -453,6 +454,7 @@ export const UserMenu: React.FC = () => {
       const enabled =
         (window as any).RUNTIME_CONFIG?.ENABLE_TVBOX_SUBSCRIBE || false;
       setSubscribeEnabled(enabled);
+      setTvModeEnabled((window as any).RUNTIME_CONFIG?.ENABLE_TV_MODE !== false);
     }
   }, []);
 
@@ -4295,14 +4297,22 @@ export const UserMenu: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <p className='mt-5 text-sm leading-6 text-slate-600 dark:text-slate-400'>
-                电视端打开 /tv 后会显示二维码；手机在这里打开相机扫描并确认登录。
+                <p className='mt-5 text-sm leading-6 text-slate-600 dark:text-slate-400'>
+                {tvModeEnabled
+                  ? '电视端打开 /tv 后会显示二维码；手机在这里打开相机扫描并确认登录。'
+                  : '当前部署未开启 TV 模式，/tv 页面和 Web 电视遥控不可用。'}
               </p>
+              {!tvModeEnabled && (
+                <div className='mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-800 dark:border-amber-300/20 dark:bg-amber-400/10 dark:text-amber-200'>
+                  TV 模式未开启。请在环境变量中设置 ENABLE_TV_MODE=true 后重启服务。
+                </div>
+              )}
               <div className='mt-5 grid gap-2 sm:grid-cols-2'>
                 <button
                   type='button'
                   onClick={startTvQrScanner}
-                  className='inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 py-3 text-sm font-black text-white transition hover:bg-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/70'
+                  disabled={!tvModeEnabled}
+                  className='inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 py-3 text-sm font-black text-white transition hover:bg-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/70 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-white/10 dark:disabled:text-slate-500'
                 >
                   打开相机扫码登录
                   <Smartphone className='h-4 w-4' />
@@ -4310,10 +4320,12 @@ export const UserMenu: React.FC = () => {
                 <button
                   type='button'
                   onClick={() => {
+                    if (!tvModeEnabled) return;
                     setIsSubscribeOpen(false);
                     setIsTVRemoteOpen(true);
                   }}
-                  className='inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500/70 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200'
+                  disabled={!tvModeEnabled}
+                  className='inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500/70 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200 dark:disabled:bg-white/10 dark:disabled:text-slate-500'
                 >
                   <Sliders className='h-4 w-4' />
                   远程电视遥控器

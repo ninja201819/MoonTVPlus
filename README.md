@@ -424,6 +424,7 @@ dockge/komodo 等 docker compose UI 也有自动更新功能
 | NEXT_PUBLIC_FLUID_SEARCH                 | 是否开启搜索接口流式输出                                     | true/ false                 | true                                                         |
 | NEXT_PUBLIC_PROXY_M3U8_TOKEN             | M3U8 代理 API 鉴权 Token（外部播放器跳转时的鉴权token，不填为无鉴权） | 任意字符串                  | (空)                                                         |
 | NEXT_PUBLIC_DANMAKU_CACHE_EXPIRE_MINUTES | 弹幕缓存失效时间（分钟数，设为 0 时不缓存）                  | 0 或正整数                  | 4320（3天）                                                  |
+| ENABLE_TV_MODE                           | 是否启用 TV 模式；设为 false 后 /tv 不可访问，且不启动电视遥控 Socket.IO 监听 | true/false                  | true                                                         |
 | ENABLE_TVBOX_SUBSCRIBE                   | 是否启用 TVBOX 订阅功能                                      | true/false                  | false                                                        |
 | TVBOX_SUBSCRIBE_TOKEN                    | TVBOX 订阅 API 访问 Token，如启用TVBOX功能必须设置该项       | 任意字符串                  | (空)                                                         |
 | TVBOX_BLOCKED_SOURCES                    | TVBOX 订阅屏蔽源列表（多个源用逗号分隔，匹配视频源的 key）   | 逗号分隔的源 key            | (空)                                                         |

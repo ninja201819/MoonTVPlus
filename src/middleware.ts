@@ -4,9 +4,14 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getAuthInfoFromCookie } from '@/lib/auth';
 import { TOKEN_CONFIG } from '@/lib/refresh-token';
+import { isTVModeEnabled } from '@/lib/tv-mode';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (!isTVModeEnabled() && isTVModePath(pathname)) {
+    return new NextResponse('Not Found', { status: 404 });
+  }
 
   // 跳过不需要认证的路径
   if (shouldSkipAuth(pathname)) {
@@ -169,6 +174,10 @@ function shouldSkipAuth(pathname: string): boolean {
   ];
 
   return skipPaths.some((path) => pathname.startsWith(path));
+}
+
+function isTVModePath(pathname: string): boolean {
+  return pathname === '/tv' || pathname.startsWith('/tv/') || pathname.startsWith('/api/tv-remote/');
 }
 
 // 配置middleware匹配规则
