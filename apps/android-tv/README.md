@@ -8,6 +8,7 @@
 - `APP_NAME`: Android TV 桌面显示名称
 - `VERSION_NAME`: APK 版本名
 - `VERSION_CODE`: APK 版本号，整数
+- `MIN_SDK`: 最低 Android API，标准版为 `23`（Android 6+），兼容版为 `21`（Android 5+）
 
 App 启动时会自动打开：
 
@@ -17,6 +18,7 @@ BASE_URL 去掉末尾 / 后 + /tv
 
 ## 特性
 
+- GitHub Actions 默认构建两个版本：`android6plus` 标准版和 `android5plus` 兼容版
 - 锁定横屏
 - 支持 Android TV Launcher
 - 允许 HTTP 明文访问
